@@ -6,7 +6,7 @@ import numpy as np
 import configparser
 import re
 
-# ===================== CONFIG =====================
+# Chargement de la configuration
 config = configparser.ConfigParser()
 config.read('config.ini')
 
@@ -24,32 +24,32 @@ FG_TH         = config.getint('Settings', 'alpha_fg_threshold', fallback=210)
 BG_TH         = config.getint('Settings', 'alpha_bg_threshold', fallback=25)
 ERODE_SIZE    = config.getint('Settings', 'alpha_erode_size', fallback=8)
 
-# Création dossiers
+# Création des dossiers d'entrée / sortie si absents
 for folder in [INPUT_FOLDER, OUTPUT_FOLDER]:
     Path(folder).mkdir(exist_ok=True)
 
-# Tri naturel (IMG_0001, IMG_10, IMG_0550, IMG_10000...)
+
 def natural_key(s):
+    """Clé de tri alphanumérique : trie 'IMG_2' avant 'IMG_10'."""
     return [int(c) if c.isdigit() else c.lower() for c in re.split(r'(\d+)', s)]
 
-files = [f for f in os.listdir(INPUT_FOLDER) if f.lower().endswith(('.jpg','.jpeg','.png','.webp'))]
 
-if SORT_ORDER == 'natural':
-    files = sorted(files, key=natural_key)
-else:
-    files = sorted(files)
+# Collecte et tri des images sources
+files = [f for f in os.listdir(INPUT_FOLDER) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))]
+files = sorted(files, key=natural_key) if SORT_ORDER == 'natural' else sorted(files)
 
 session = new_session(MODEL)
 
 print(f"Modèle : {MODEL} | Matting : {USE_MATTING} | {len(files)} photos")
 
 for filename in files:
-    input_path = Path(INPUT_FOLDER) / filename
+    input_path  = Path(INPUT_FOLDER) / filename
     output_path = Path(OUTPUT_FOLDER) / (filename.rsplit('.', 1)[0] + '.jpg')
 
     try:
         input_img = Image.open(input_path).convert("RGB")
 
+        # Suppression du fond avec ou sans alpha matting
         if USE_MATTING:
             output_img = remove(
                 input_img,
@@ -62,24 +62,23 @@ for filename in files:
         else:
             output_img = remove(input_img, session=session, alpha_matting=False)
 
-        # Détection bounding box
+        # Détection du contenu visible via le canal alpha
         alpha = np.array(output_img.getchannel("A"))
         y, x = np.where(alpha > PADDING_TH)
         if len(x) == 0:
             print(f"⚠️ Rien détecté dans {filename}")
             continue
 
-        x_min, x_max = x.min(), x.max()
-        y_min, y_max = y.min(), y.max()
+        # Recadrage sur la bounding box du sujet
+        cropped = output_img.crop((x.min(), y.min(), x.max() + 1, y.max() + 1))
 
-        cropped = output_img.crop((x_min, y_min, x_max+1, y_max+1))
-
+        # Mise à l'échelle pour occuper FILL_RATIO de la zone cible
         scale = (TARGET_SIZE * FILL_RATIO) / max(cropped.width, cropped.height)
         new_w = int(cropped.width * scale)
         new_h = int(cropped.height * scale)
-
         resized = cropped.resize((new_w, new_h), Image.LANCZOS)
 
+        # Centrage sur fond blanc
         final = Image.new("RGB", (TARGET_SIZE, TARGET_SIZE), (255, 255, 255))
         paste_x = (TARGET_SIZE - new_w) // 2
         paste_y = (TARGET_SIZE - new_h) // 2
