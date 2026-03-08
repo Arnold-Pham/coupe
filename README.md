@@ -22,7 +22,7 @@ Il installe automatiquement :
 ## Utilisation
 
 1. Placer les photos dans le dossier `photos_a_traiter/`
-2. Double-cliquer sur **`lancer.bat`**
+2. Double-cliquer sur **`start.bat`**
 3. Les images traitées apparaissent dans `photos_traitees/` au format JPEG
 
 Formats acceptés : `.jpg`, `.jpeg`, `.png`, `.webp`
@@ -53,10 +53,10 @@ coupe/
 ├── photos_a_traiter/      # Dossier source (créé automatiquement)
 ├── photos_traitees/       # Dossier de sortie (créé automatiquement)
 ├── config.ini             # Configuration
-├── traiter_chaussures.py  # Script principal
+├── script.py              # Script principal
 ├── requirements.txt       # Dépendances Python
 ├── setup.bat              # Installation (lancer une fois)
-└── lancer.bat             # Lancement du traitement
+└── start.bat              # Lancement du traitement
 ```
 
 ## Modèles rembg disponibles

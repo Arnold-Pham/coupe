@@ -40,5 +40,5 @@ if %errorlevel% neq 0 (
 
 echo.
 echo === INSTALLATION TERMINEE ===
-echo Double-clique sur lancer.bat pour traiter tes photos
+echo Double-clique sur start.bat pour traiter tes photos
 pause

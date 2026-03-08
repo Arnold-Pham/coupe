@@ -14,7 +14,7 @@ cd /d "%~dp0"
 )
 
 echo Traitement en cours...
-"%PYTHON%" traiter_chaussures.py
+"%PYTHON%" script.py
 
 echo.
 echo Termine - photos dans photos_traitees
