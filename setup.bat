@@ -26,6 +26,15 @@ nvidia-smi >nul 2>&1
 if %errorlevel% equ 0 (
     echo GPU detecte - installation onnxruntime-gpu...
     "%PYTHON%" -m pip install onnxruntime-gpu --quiet --no-warn-script-location
+    echo Test CUDA (cuDNN)...
+    "%PYTHON%" -c "import ctypes,glob,os;import onnxruntime as o;ctypes.WinDLL(glob.glob(os.path.join(os.path.dirname(o.__file__),'capi','*cuda*.dll'))[0])" >nul 2>&1
+    if %errorlevel% neq 0 (
+        echo cuDNN manquant - repli sur onnxruntime CPU...
+        "%PYTHON%" -m pip uninstall onnxruntime-gpu -y --quiet >nul 2>&1
+        "%PYTHON%" -m pip install onnxruntime --quiet --no-warn-script-location
+    ) else (
+        echo GPU CUDA operationnel
+    )
 ) else (
     echo Mode CPU - onnxruntime standard conserve
 )
