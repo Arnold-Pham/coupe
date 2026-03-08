@@ -5,9 +5,12 @@ title Traitement Chaussures
 set PYTHON=%~dp0python_embed\python.exe
 cd /d "%~dp0"
 
-:: Vérification silencieuse
+:: Vérification des dépendances
 "%PYTHON%" -c "import PIL, numpy, rembg" >nul 2>&1 || (
-    "%PYTHON%" -m pip install -r requirements.txt --quiet
+    echo ERREUR : dépendances manquantes.
+    echo Veuillez d'abord exécuter setup.bat
+    pause
+    exit /b 1
 )
 
 echo Traitement en cours...
