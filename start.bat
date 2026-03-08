@@ -3,6 +3,9 @@ chcp 65001 >nul
 title Traitement Chaussures
 
 set PYTHON=%~dp0python_embed\python.exe
+set NVIDIA_PKGS=%~dp0python_embed\Lib\site-packages\nvidia
+if exist "%NVIDIA_PKGS%\cudnn\bin"  set PATH=%NVIDIA_PKGS%\cudnn\bin;%PATH%
+if exist "%NVIDIA_PKGS%\cublas\bin" set PATH=%NVIDIA_PKGS%\cublas\bin;%PATH%
 cd /d "%~dp0"
 
 :: Verification des dependances - executer setup.bat si manquantes
