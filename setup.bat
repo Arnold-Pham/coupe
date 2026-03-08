@@ -15,30 +15,30 @@ cd /d "%~dp0"
 echo Installation de pip...
 "%PYTHON%" python_embed\get-pip.py --quiet
 
-echo Mise à jour pip...
-"%PYTHON%" -m pip install --upgrade pip --quiet
+echo Mise a jour pip...
+"%PYTHON%" -m pip install --upgrade pip --quiet --no-warn-script-location
 
-echo Installation dépendances de base (CPU)...
-"%PYTHON%" -m pip install -r requirements.txt --quiet
+echo Installation des dependances...
+"%PYTHON%" -m pip install -r requirements.txt --quiet --no-warn-script-location
 
-echo Détection GPU...
+echo Detection GPU...
 nvidia-smi >nul 2>&1
 if %errorlevel% equ 0 (
-    echo GPU détecté - installation onnxruntime-gpu...
-    "%PYTHON%" -m pip install onnxruntime-gpu --quiet
+    echo GPU detecte - installation onnxruntime-gpu...
+    "%PYTHON%" -m pip install onnxruntime-gpu --quiet --no-warn-script-location
 ) else (
-    echo Mode CPU - onnxruntime standard conservé
+    echo Mode CPU - onnxruntime standard conserve
 )
 
 echo.
-echo Préparation du modèle IA (téléchargement si nécessaire ~175 Mo)...
+echo Preparation du modele IA (telechargement si necessaire ~175 Mo)...
 "%PYTHON%" -c "from rembg import new_session; new_session('isnet-general-use')"
 if %errorlevel% neq 0 (
-    echo AVERTISSEMENT : échec du téléchargement du modèle.
-    echo Le modèle sera téléchargé au premier lancement.
+    echo AVERTISSEMENT : echec du telechargement du modele.
+    echo Le modele sera telecharge au premier lancement.
 )
 
 echo.
-echo === INSTALLATION TERMINÉE ===
+echo === INSTALLATION TERMINEE ===
 echo Double-clique sur lancer.bat pour traiter tes photos
 pause
