@@ -1,0 +1,18 @@
+# Paquets pip installés (lancer setup.bat pour les installer)
+python_embed/Lib/
+
+# Cache modèles rembg/u2net
+.u2net/
+
+# Cache Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Dossiers photos utilisateur (données, pas sources)
+photos_a_traiter/
+photos_traitees/
+
+# Artefacts Windows
+Thumbs.db
+desktop.ini
